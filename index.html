@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converter Imagem para Base64</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #output {
+            margin-top: 20px;
+        }
+        #base64 {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Estilo do Toast */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cole uma Imagem para Converter para Base64</h1>
+    <p>Pressione Ctrl + V para colar a imagem.</p>
+
+    <div id="output">
+        <textarea id="base64" placeholder="Aqui vai o base64 da imagem..."></textarea>
+        <button onclick="copyBase64()">Copiar Base64</button>
+        <div>
+            <h3>Image Preview</h3>
+            <img id="imagePreview" src="" alt="Imagem convertida">
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">Base64 copiado!</div>
+
+    <script>
+        // Função para capturar a imagem colada
+        document.body.addEventListener('paste', function(e) {
+            var items = e.clipboardData.items;
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf("image") === 0) {
+                    var blob = items[i].getAsFile();
+                    var reader = new FileReader();
+                    reader.onloadend = function() {
+                        var base64String = reader.result;
+                        document.getElementById("base64").value = base64String;
+                        document.getElementById("imagePreview").src = base64String;
+                    }
+                    reader.readAsDataURL(blob);
+                }
+            }
+        });
+
+        // Função para copiar o base64 para a área de transferência
+        function copyBase64() {
+            var base64Text = document.getElementById("base64");
+            base64Text.select();
+            document.execCommand('copy');
+            showToast();
+        }
+
+        // Função para exibir o toast
+        function showToast() {
+            var toast = document.getElementById("toast");
+            toast.classList.add("show");
+            setTimeout(function() {
+                toast.classList.remove("show");
+            }, 3000); // O toast desaparece após 3 segundos
+        }
+    </script>
+
+</body>
+</html>
